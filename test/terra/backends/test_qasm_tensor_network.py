@@ -10,7 +10,9 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 """
-ExtendedStabilizer Integration Tests
+Tensor Network Integration Tests
+This set of tests runs all the circuits from test/terra/references/: ref_1q_clifford and ref_2q_clifford,
+with the exception of those with the multiplexer gate which is not supported yet.
 """
 
 import unittest
@@ -22,10 +24,9 @@ from test.terra.reference import ref_simple_circuit, ref_1q_clifford, ref_2q_cli
 
 from qiskit import *
 from qiskit.providers.aer import QasmSimulator
-from qiskit.extensions.simulator import Snapshot
+#from qiskit.extensions.simulator import Snapshot
 
 logger = logging.getLogger(__name__)
-
 
 class TestQasmTensorNetworkSimulator(common.QiskitAerTestCase):
     """QasmSimulator tensor_network method tests."""
@@ -33,19 +34,25 @@ class TestQasmTensorNetworkSimulator(common.QiskitAerTestCase):
 
     def test_measure_deterministic_without_sampling(self):
         """TestTensorNetwork measure with deterministic counts without sampling"""
-        shots = 100
-
         deterministic_tests = [(ref_1q_clifford.h_gate_circuits_deterministic, ref_1q_clifford.h_gate_counts_deterministic),
-                 (ref_1q_clifford.x_gate_circuits_deterministic, ref_1q_clifford.x_gate_counts_deterministic),
-                 (ref_1q_clifford.z_gate_circuits_deterministic, ref_1q_clifford.z_gate_counts_deterministic),
-                 (ref_1q_clifford.y_gate_circuits_deterministic, ref_1q_clifford.y_gate_counts_deterministic),
-                 (ref_1q_clifford.s_gate_circuits_deterministic, ref_1q_clifford.s_gate_counts_deterministic),
-                 (ref_1q_clifford.sdg_gate_circuits_deterministic, ref_1q_clifford.sdg_gate_counts_deterministic)]
+             (ref_1q_clifford.x_gate_circuits_deterministic, ref_1q_clifford.x_gate_counts_deterministic),
+             (ref_1q_clifford.z_gate_circuits_deterministic, ref_1q_clifford.z_gate_counts_deterministic),
+             (ref_1q_clifford.y_gate_circuits_deterministic, ref_1q_clifford.y_gate_counts_deterministic),
+             (ref_1q_clifford.s_gate_circuits_deterministic, ref_1q_clifford.s_gate_counts_deterministic),
+             (ref_1q_clifford.sdg_gate_circuits_deterministic, ref_1q_clifford.sdg_gate_counts_deterministic),
+             (ref_2q_clifford.cx_gate_circuits_deterministic,ref_2q_clifford.cx_gate_counts_deterministic),
+             (ref_2q_clifford.cz_gate_circuits_deterministic, ref_2q_clifford.cz_gate_counts_deterministic),
+             (ref_2q_clifford.swap_gate_circuits_deterministic, ref_2q_clifford.swap_gate_counts_deterministic)]
+
         determ_test_list = {'list':deterministic_tests, 'shots':100, 'delta':0}
 
         nondeterministic_tests = [(ref_1q_clifford.h_gate_circuits_nondeterministic, ref_1q_clifford.h_gate_counts_nondeterministic),
-                 (ref_1q_clifford.s_gate_circuits_nondeterministic, ref_1q_clifford.s_gate_counts_nondeterministic),
-                 (ref_1q_clifford.sdg_gate_circuits_nondeterministic, ref_1q_clifford.sdg_gate_counts_nondeterministic)]
+             (ref_1q_clifford.s_gate_circuits_nondeterministic, ref_1q_clifford.s_gate_counts_nondeterministic),
+             (ref_1q_clifford.sdg_gate_circuits_nondeterministic, ref_1q_clifford.sdg_gate_counts_nondeterministic),
+             (ref_2q_clifford.cx_gate_circuits_nondeterministic, ref_2q_clifford.cx_gate_counts_nondeterministic),
+             (ref_2q_clifford.cz_gate_circuits_nondeterministic, ref_2q_clifford.cz_gate_counts_nondeterministic),
+             (ref_2q_clifford.swap_gate_circuits_nondeterministic, ref_2q_clifford.swap_gate_counts_nondeterministic)]
+
         nondeterm_test_list = {'list':nondeterministic_tests, 'shots':2000, 'delta':0.05}
 
         BACKEND_OPTS_TN = {"method": "tensor_network"}
