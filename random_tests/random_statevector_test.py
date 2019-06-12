@@ -39,7 +39,7 @@ def random_statevector_test(num_qubits=4, num_gates=10, seed=100000000):
 
     BACKEND_OPTS_TN = {"method": "tensor_network"}
 
-    job_sim_TN = execute([qc], QasmSimulator(), backend_options=BACKEND_OPTS_ES, shots=1)
+    job_sim_TN = execute([qc], QasmSimulator(), backend_options=BACKEND_OPTS_TN, shots=1)
     result_TN = job_sim_TN.result()
     res_TN = result_TN.results
 
