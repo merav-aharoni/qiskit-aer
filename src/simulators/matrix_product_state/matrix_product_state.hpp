@@ -35,7 +35,7 @@
 #include "simulators/state.hpp"
 #include "matrix_product_state_internal.hpp"
 #include "matrix_product_state_internal.cpp"
-
+#include <chrono> 
 
 namespace AER {
 namespace MatrixProductState {
@@ -428,9 +428,17 @@ void State::apply_ops(const std::vector<Operations::Op> &ops,
 void State::snapshot_pauli_expval(const Operations::Op &op,
 				  ExperimentData &data,
 				  SnapshotDataType type){
+  std::chrono::time_point<std::chrono::system_clock> start, end; 
+  start = std::chrono::system_clock::now(); 
   if (op.params_expval_pauli.empty()) {
     throw std::invalid_argument("Invalid expval snapshot (Pauli components are empty).");
   }
+
+  reg_t bond_dimensions = qreg_.get_bond_dimensions();
+  std::cout<<"bond dimensions = " ;
+  for (uint_t i=0; i<bond_dimensions.size(); i++)
+    std::cout << bond_dimensions[i] << " ";
+  std::cout << std::endl;
 
   //Compute expval components
   complex_t expval(0., 0.);
@@ -457,6 +465,11 @@ void State::snapshot_pauli_expval(const Operations::Op &op,
       data.add_pershot_snapshot("expectation_values", op.string_params[0], expval);
       break;
   }
+  end = std::chrono::system_clock::now(); 
+  std::chrono::duration<double> elapsed_seconds = end - start; 
+  
+  std::cout << "elapsed time for exp val: " << elapsed_seconds.count() << " sec" <<std::endl;
+
 }
 
 void State::snapshot_matrix_expval(const Operations::Op &op,

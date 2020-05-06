@@ -842,8 +842,17 @@ void QasmController::run_single_shot(const Circuit &circ, State_t &state,
                                      const Initstate_t &initial_state,
                                      ExperimentData &data,
                                      RngEngine &rng) const {
+  std::chrono::time_point<std::chrono::system_clock> start, end; 
+  start = std::chrono::system_clock::now(); 
+
   initialize_state(circ, state, initial_state);
   state.apply_ops(circ.ops, data, rng);
+
+  end = std::chrono::system_clock::now(); 
+  std::chrono::duration<double> elapsed_seconds = end - start; 
+  
+  std::cout << "elapsed time for all operations: " << elapsed_seconds.count() << " sec" <<std::endl;
+
   state.add_creg_to_data(data);
 }
 
@@ -904,9 +913,16 @@ void QasmController::run_circuit_without_noise(const Circuit &circ,
     // Run circuit instructions before first measure
     std::vector<Operations::Op> ops(opt_circ.ops.begin(),
                                     opt_circ.ops.begin() + pos);
-    initialize_state(opt_circ, state, initial_state);
-    state.apply_ops(ops, data, rng);
 
+  std::chrono::time_point<std::chrono::system_clock> start, end; 
+  start = std::chrono::system_clock::now(); 
+    initialize_state(opt_circ, state, initial_state);
+
+    state.apply_ops(ops, data, rng);
+  end = std::chrono::system_clock::now(); 
+  std::chrono::duration<double> elapsed_seconds = end - start; 
+  
+  std::cout << "elapsed time for all operations: " << elapsed_seconds.count() << " sec" <<std::endl;
     // Get measurement operations and set of measured qubits
     ops = std::vector<Operations::Op>(opt_circ.ops.begin() + pos,
                                       opt_circ.ops.end());
