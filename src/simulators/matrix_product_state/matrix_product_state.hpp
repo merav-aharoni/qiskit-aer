@@ -379,7 +379,7 @@ void State::set_config(const json_t &config) {
   if (JSON::get_value(json_chop_threshold, "chop_threshold", config))
     MPS::set_json_chop_threshold(json_chop_threshold);
 
-  // Set OMP threshold for state update functions
+  // Set OMP num threshold
   uint_t omp_qubit_threshold;
   if (JSON::get_value(omp_qubit_threshold, "mps_parallel_threshold", config))
     MPS::set_omp_threshold(omp_qubit_threshold);
@@ -390,10 +390,10 @@ void State::set_config(const json_t &config) {
     MPS::set_sample_measure_index_size(index_size);
   };
 
-  // Enable sorted gate optimzations
-  bool gate_opt = false;
-  //  if (JSON::get_value(gate_opt, "mps_gate_opt", config))
-  //    MPS::set_enable_gate_opt(gate_opt);
+  // Set OMP threads
+  uint_t omp_threads;
+  if (JSON::get_value(omp_threads, "mps_omp_threads", config))
+    MPS::set_omp_threads(omp_threads);
 }
 
 //=========================================================================
@@ -448,7 +448,7 @@ void State::apply_ops(const std::vector<Operations::Op> &ops,
 
 void State::snapshot_pauli_expval(const Operations::Op &op,
 				  ExperimentData &data,
-				  SnapshotDataType type){
+				  SnapshotDataType type) {
   if (op.params_expval_pauli.empty()) {
     throw std::invalid_argument("Invalid expval snapshot (Pauli components are empty).");
   }

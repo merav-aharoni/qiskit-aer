@@ -18,6 +18,7 @@
 
 #define SQR_HALF sqrt(0.5)
 #define NUMBER_OF_PRINTED_DIGITS 3
+#define MATRIX_OMP_THRESHOLD 16
 
 #include <cstdio>
 #include <iostream>
@@ -458,28 +459,30 @@ void MPS_Tensor::contract_2_dimensions(const MPS_Tensor &left_gamma,
   uint_t omp_limit = left_rows*right_columns;
 
 #ifdef _WIN32
-    #pragma omp parallel for if ((omp_limit > 10) && (omp_threads > 1)) num_threads(omp_threads) 
+    #pragma omp parallel for if ((omp_limit > MATRIX_OMP_THRESHOLD) && (omp_threads > 1)) num_threads(omp_threads) 
 #else
-    #pragma omp parallel for collapse(2) if ((omp_limit > 10) && (omp_threads > 1)) num_threads(omp_threads) 
+    #pragma omp parallel for collapse(2) if ((omp_limit > MATRIX_OMP_THRESHOLD) && (omp_threads > 1)) num_threads(omp_threads) 
 #endif 
       for (int_t l_row=0; l_row<left_rows; l_row++)
          for (int_t r_col=0; r_col<right_columns; r_col++)
            result(l_row, r_col) = 0;
 
 #ifdef _WIN32
-    #pragma omp parallel for if ((omp_limit > 10)  && (omp_threads > 1)) num_threads(omp_threads)
+    #pragma omp parallel for if ((omp_limit > MATRIX_OMP_THRESHOLD)  && (omp_threads > 1)) num_threads(omp_threads)
 #else
-    #pragma omp parallel for collapse(2) if ((omp_limit > 10)  && (omp_threads > 1)) num_threads(omp_threads)
+    #pragma omp parallel for collapse(2) if ((omp_limit > MATRIX_OMP_THRESHOLD)  && (omp_threads > 1)) num_threads(omp_threads)
 #endif
-      for (int_t l_row=0; l_row<left_rows; l_row++)
+      for (int_t l_row=0; l_row<left_rows; l_row++) {
         for (int_t r_col=0; r_col<right_columns; r_col++) {
 
-          for (int_t size=0; size<left_size; size++)
-	      for (int_t index=0; index<left_columns ; index++) {
-		result(l_row, r_col) += left_gamma.data_[size](l_row, index) *
-		  right_gamma.data_[size](index, r_col);      
-	      }
+          for (int_t size=0; size<left_size; size++) {
+	    for (int_t index=0; index<left_columns ; index++) {
+	      result(l_row, r_col) += left_gamma.data_[size](l_row, index) *
+		right_gamma.data_[size](index, r_col);
+	    }
+	  }
 	}
+      }
 }
 //---------------------------------------------------------------
 // function name: Decompose

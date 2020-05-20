@@ -209,9 +209,9 @@ cmatrix_t mul_matrix_by_lambda(const cmatrix_t &mat,
   uint_t num_rows = mat.GetRows(), num_cols = mat.GetColumns();
 
 #ifdef _WIN32
-#pragma omp parallel for if (num_rows*num_cols > 64 && MPS::get_omp_threads() > 1) num_threads(MPS::get_omp_threads()) 
+#pragma omp parallel for if (num_rows*num_cols > MATRIX_OMP_THRESHOLD && MPS::get_omp_threads() > 1) num_threads(MPS::get_omp_threads()) 
 #else
-#pragma omp parallel for collapse(2) if (num_rows*num_cols > 64 && MPS::get_omp_threads() > 1) num_threads(MPS::get_omp_threads()) 
+#pragma omp parallel for collapse(2) if (num_rows*num_cols > MATRIX_OMP_THRESHOLD && MPS::get_omp_threads() > 1) num_threads(MPS::get_omp_threads()) 
 #endif
   for(int_t row = 0; row < static_cast<int_t>(num_rows); row++) {
     for(int_t col = 0; col < static_cast<int_t>(num_cols); col++) {
