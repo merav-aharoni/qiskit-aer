@@ -835,7 +835,7 @@ void MPS::MPS_with_new_indices(const reg_t &qubits,
 			       MPS& temp_MPS) const {
   temp_MPS.initialize(*this);
   bool ordered = true;
-  centralize_and_sort_qubits(qubits, sorted_qubits, 
+  temp_MPS.centralize_and_sort_qubits(qubits, sorted_qubits, 
 				      centralized_qubits, ordered);
 
 }
