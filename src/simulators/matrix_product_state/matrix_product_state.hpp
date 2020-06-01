@@ -649,7 +649,7 @@ void State::apply_measure(const reg_t &qubits,
   creg_.store_measure(outcome, cmemory, cregister);
 }
 
-rvector_t State::measure_probs(const reg_t &qubits) {
+rvector_t State::measure_probs(const reg_t &qubits) const{
   rvector_t probvector;
   qreg_.get_probabilities_vector(probvector, qubits);
   return probvector;

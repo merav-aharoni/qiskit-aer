@@ -44,9 +44,9 @@ class QasmUnitaryGateTests:
 
     def test_random_unitary_gate(self):
         """Test simulation with random unitary gate circuit instructions."""
-        shots = 2000
+        shots = 4000
         circuits = ref_unitary_gate.unitary_random_gate_circuits_nondeterministic(final_measure=True)
-        targets = ref_unitary_gate.unitary_random_gate_counts_nondeterministic()
+        targets = ref_unitary_gate.unitary_random_gate_counts_nondeterministic(shots)
         result = execute(circuits, self.SIMULATOR, shots=shots).result()
         self.assertTrue(getattr(result, 'success', False))
         self.compare_counts(result, circuits, targets, delta=0.05 * shots)
