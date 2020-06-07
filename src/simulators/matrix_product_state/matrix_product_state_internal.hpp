@@ -233,6 +233,12 @@ public:
 
   void initialize_from_statevector(uint_t num_qubits, cvector_t state_vector);
 
+   //----------------------------------------------------------------
+   // Function name: get_bond_dimensions
+   // Description: returns a vector of the bond dimensions 
+   //----------------------------------------------------------------
+  reg_t get_bond_dimensions() const;
+
 private:
 
   MPS_Tensor& get_qubit(uint_t index) {

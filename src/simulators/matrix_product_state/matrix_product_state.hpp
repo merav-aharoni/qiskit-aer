@@ -459,6 +459,11 @@ void State::snapshot_pauli_expval(const Operations::Op &op,
   if (op.params_expval_pauli.empty()) {
     throw std::invalid_argument("Invalid expval snapshot (Pauli components are empty).");
   }
+  reg_t bond_dimensions = qreg_.get_bond_dimensions();
+  std::cout<<"bond dimensions = " ;
+  for (uint_t i=0; i<bond_dimensions.size(); i++)
+    std::cout << bond_dimensions[i] << " ";
+  std::cout << std::endl;
 
   //Compute expval components
   complex_t expval(0., 0.);
