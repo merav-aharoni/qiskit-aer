@@ -29,7 +29,7 @@
 #include "framework/linalg/almost_equal.hpp"
 
 #define mul_factor 1e2
-#define tiny_factor 1e30
+#define tiny_factor 1e50
 #define THRESHOLD 1e-9
 #define NUM_SVD_TRIES 15
 
