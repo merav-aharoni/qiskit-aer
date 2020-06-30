@@ -1031,6 +1031,16 @@ std::vector<reg_t> MPS::get_matrices_sizes() const
   return result;
 }
 
+reg_t MPS::get_bond_dimensions() const
+{
+  reg_t result;
+  for(uint_t i=0; i<num_qubits_-1; i++)
+    {
+      result.push_back(lambda_reg_[i].size());
+    }
+  return result;
+}
+
 MPS_Tensor MPS::state_vec_as_MPS(const reg_t &qubits) {
   bool ordered = true;
   reg_t new_qubits;

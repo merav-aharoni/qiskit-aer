@@ -100,7 +100,7 @@ void reduce_zeros(cmatrix_t &U, rvector_t &S, cmatrix_t &V,
   uint_t SV_num = num_of_SV(S, CHOP_THRESHOLD);
   uint_t new_SV_num = SV_num;
   new_SV_num = SV_num;
-
+  std::cout << "SV num = " << SV_num <<std::endl;
   if (max_bond_dimension < SV_num) {
     // in this case, leave only the first max_bond_dimension
     // values in S, and discard all the rest
@@ -124,6 +124,7 @@ void reduce_zeros(cmatrix_t &U, rvector_t &S, cmatrix_t &V,
 
   // After approximation, we may need to re-normalize the values of S
   if (new_SV_num < SV_num) {
+    std::cout << "Reduced: after approx , new SV num = " << new_SV_num <<std::endl;
     double sum=0;
     for (uint_t i=0; i<S.size(); i++) {
       sum += std::norm(S[0]);
