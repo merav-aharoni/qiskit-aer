@@ -534,6 +534,7 @@ void MPS_Tensor::Decompose(MPS_Tensor &temp, MPS_Tensor &left_gamma, rvector_t &
   rvector_t S(std::min(C.GetRows(), C.GetColumns()));
 
   csvd_wrapper(C, U, S, V);
+  std::cout << "U.rows = " << U.GetRows() <<", U.cols = " << U.GetColumns() <<std::endl<< "V.rows = " << V.GetRows() <<", V.cols = " << V.GetColumns() << std::endl;
   reduce_zeros(U, S, V,
 	       max_bond_dimension_, truncation_threshold_);
 

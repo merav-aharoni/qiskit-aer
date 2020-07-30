@@ -118,6 +118,7 @@ void reduce_zeros(cmatrix_t &U, rvector_t &S, cmatrix_t &V,
       break;
     }
   }
+
   U.resize(U.GetRows(), new_SV_num);
   S.resize(new_SV_num);
   V.resize(V.GetRows(), new_SV_num);
@@ -140,13 +141,19 @@ void reduce_zeros(cmatrix_t &U, rvector_t &S, cmatrix_t &V,
 
 void validate_SVD_result(cmatrix_t &A, cmatrix_t &U,rvector_t &S,cmatrix_t &V) {
   const uint_t nrows = A.GetRows(), ncols = A.GetColumns();
+  std::cout<<"in validate"<<std::endl;
+  std::cout <<"A.nrows = " <<nrows << ", A.ncols = " << ncols << std::endl;
   cmatrix_t diag_S = diag(S, nrows, ncols);
   cmatrix_t product = U*diag_S;
   product = product * AER::Utils::dagger(V);
+  std::cout << "product, rows = " << product.GetRows() << ", cols = " << product.GetColumns() << std::endl;
+
   for (uint_t ii=0; ii < nrows; ii++)
     for (uint_t jj=0; jj < ncols; jj++)
       if (!Linalg::almost_equal(std::abs(A(ii, jj)), std::abs(product(ii, jj)), THRESHOLD)) {
-	throw std::runtime_error("Error: Wrong SVD calculations: A != USV*");
+	std::cout << "validate is not equal"<< std::endl;
+	std::cout << product<<std::endl;
+	//throw std::runtime_error("Error: Wrong SVD calculations: A != USV*");
       }
 }
 
@@ -165,6 +172,7 @@ status csvd(cmatrix_t &A, cmatrix_t &U,rvector_t &S,cmatrix_t &V)
   if (m < n)
     {
     	transposed = true;
+	std::cout << "transposed"<<std::endl;
     	A = AER::Utils::dagger(A);
 	std::swap(m,n);
     }
@@ -536,9 +544,9 @@ status csvd(cmatrix_t &A, cmatrix_t &U,rvector_t &S,cmatrix_t &V)
 	}
       }
     }
-#ifdef DEBUG
+    std::cout << "before validate, U.rows = " << U.GetRows() << ", U.cols =" << U.GetColumns() << ", V.rows = " << V.GetRows() << ", V.cols =" << V.GetColumns() << std::endl;
+
     validate_SVD_result(temp_A, U, S, V);
-#endif
 
     // Transpose again if m < n
     if(transposed)
@@ -550,6 +558,7 @@ status csvd(cmatrix_t &A, cmatrix_t &U,rvector_t &S,cmatrix_t &V)
 
 void csvd_wrapper (cmatrix_t &A, cmatrix_t &U,rvector_t &S,cmatrix_t &V)
 {
+  std::cout << "In SVD, matrix size = " << A.GetRows() << " x " << A.GetColumns() << std::endl;
   cmatrix_t copied_A = A;
   int times = 0;
 #ifdef DEBUG

@@ -447,6 +447,17 @@ void State::apply_ops(const std::vector<Operations::Op> &ops,
                                       op.name + "\'.");
       }
     }
+    std::cout <<"After apply_op "<< op.name << " to qubits: ";
+    for (uint_t i=0; i<op.qubits.size(); i++)
+      std::cout << op.qubits[i] << " ";
+    std::cout << std::endl;
+    std::cout << "bond dimension: ";
+  reg_t bond_dimensions = qreg_.get_bond_dimensions();
+  for (uint_t i=0; i<bond_dimensions.size(); i++)
+    std::cout << bond_dimensions[i] << " ";
+  std::cout << std::endl;
+  //  std::cout<<"Current state = " << std::endl;
+  //   qreg_.print(std::cout);
   }
 }
 
@@ -460,7 +471,6 @@ void State::snapshot_pauli_expval(const Operations::Op &op,
   if (op.params_expval_pauli.empty()) {
     throw std::invalid_argument("Invalid expval snapshot (Pauli components are empty).");
   }
-  qreg_.print(std::cout);
   reg_t bond_dimensions = qreg_.get_bond_dimensions();
   std::cout<<"bond dimensions = " ;
   for (uint_t i=0; i<bond_dimensions.size(); i++)

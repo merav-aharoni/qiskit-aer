@@ -344,7 +344,8 @@ void MPS::apply_cz(uint_t index_A, uint_t index_B)
 void MPS::apply_cu1(uint_t index_A, uint_t index_B, double lambda)
 {
   cmatrix_t u1_matrix = AER::Utils::Matrix::u1(lambda);
-  apply_2_qubit_gate(index_A, index_B, cu1, u1_matrix);
+  apply_2_qubit_gate(get_qubit_index(index_A), 
+		     get_qubit_index(index_B), cu1, u1_matrix);
 }
 
 void MPS::apply_ccx(const reg_t &qubits)
@@ -358,6 +359,7 @@ void MPS::apply_ccx(const reg_t &qubits)
 }
 
 void MPS::apply_swap_internal(uint_t index_A, uint_t index_B, bool swap_gate) {
+  std::cout << "in apply_swap_internal, A = " << index_A << ", B = " << index_B << std::endl;
   uint_t actual_A = index_A;
   uint_t actual_B = index_B;
   if(actual_A > actual_B) {
@@ -382,6 +384,12 @@ void MPS::apply_swap_internal(uint_t index_A, uint_t index_B, bool swap_gate) {
   left_lambda  = (actual_A != 0) 	    ? lambda_reg_[actual_A-1] : rvector_t {1.0};
   right_lambda = (actual_B != num_qubits_-1) ? lambda_reg_[actual_B  ] : rvector_t {1.0};
 
+  std::cout << "before swap" << std::endl;
+  uint_t A_rows_before = q_reg_[actual_A].get_data()[0].GetRows();
+  std::cout << "A.rows = " << q_reg_[actual_A].get_data()[0].GetRows()<<", A.cols = " << q_reg_[actual_A].get_data()[0].GetColumns() << std::endl;
+  //std::cout << q_reg_[actual_A].get_data()[0] <<std::endl;
+  std::cout << "B.rows = " << q_reg_[actual_B].get_data()[0].GetRows()<<", B.cols = " << q_reg_[actual_B].get_data()[0].GetColumns() << std::endl;
+  //std::cout << q_reg_[actual_B].get_data()[0] <<std::endl<<std::endl;
   q_reg_[actual_A].mul_Gamma_by_left_Lambda(left_lambda);
   q_reg_[actual_B].mul_Gamma_by_right_Lambda(right_lambda);
   MPS_Tensor temp = MPS_Tensor::contract(q_reg_[actual_A], lambda_reg_[actual_A], q_reg_[actual_B]);
@@ -396,6 +404,12 @@ void MPS::apply_swap_internal(uint_t index_A, uint_t index_B, bool swap_gate) {
   lambda_reg_[actual_A] = lambda;
   q_reg_[actual_B] = right_gamma;
   
+  std::cout << "after swap" << std::endl;
+  uint_t A_rows_after = q_reg_[actual_A].get_data()[0].GetRows();
+  std::cout << "A.rows = " << q_reg_[actual_A].get_data()[0].GetRows()<<", A.cols = " << q_reg_[actual_A].get_data()[0].GetColumns() << std::endl;
+  //std::cout << q_reg_[actual_A].get_data()[0] <<std::endl;
+  std::cout << "B.rows = " << q_reg_[actual_B].get_data()[0].GetRows()<<", B.cols = " << q_reg_[actual_B].get_data()[0].GetColumns() << std::endl;
+  //std::cout << q_reg_[actual_B].get_data()[0] <<std::endl;
   if (!swap_gate) {
     // we are moving the qubit at index_A one position to the right
     // and the qubit at index_B or index_A+1 is moved one position 
@@ -767,6 +781,11 @@ void MPS::change_position(uint_t src, uint_t dst) {
      for(uint_t i = src; i > dst; i--) {
        apply_swap_internal(i, i-1, false);
      }
+   std::cout << "At the end of change_position, src = "<<src << ", dst =" << dst <<", bond dimension: ";
+  reg_t bond_dimensions = get_bond_dimensions();
+  for (uint_t i=0; i<bond_dimensions.size(); i++)
+    std::cout << bond_dimensions[i] << " ";
+  std::cout << std::endl;
 }
 
 cmatrix_t MPS::density_matrix(const reg_t &qubits) const {
@@ -832,6 +851,8 @@ void MPS::MPS_with_new_indices(const reg_t &qubits,
 
 double MPS::expectation_value(const reg_t &qubits, 
 			      const cmatrix_t &M) const {
+
+
    reg_t internal_qubits = get_internal_qubits(qubits);
    double expval = expectation_value_internal(internal_qubits, M);
    return expval;
@@ -911,6 +932,10 @@ double MPS::expectation_value_internal(const reg_t &qubits,
 //---------------------------------------------------------------
 
 complex_t MPS::expectation_value_pauli(const reg_t &qubits, const std::string &matrices) const {
+  std::cout << "qubit order:";
+  for (uint_t i=0; i<qubit_ordering_.order_.size(); i++)
+    std::cout << qubit_ordering_.order_[i] << " ";
+  std::cout << std::endl;
     reg_t internal_qubits = get_internal_qubits(qubits);
 
     // instead of computing the expectation value on the specified qubits, 
